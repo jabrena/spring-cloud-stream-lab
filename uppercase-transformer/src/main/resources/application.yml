@@ -1,0 +1,53 @@
+spring:
+  cloud:
+    stream:
+      default:
+        content-type: application/json
+      default-binder: rabbit
+      function:
+        definition: sendTestData;transform;receive;receive2
+      bindings:
+        sendTestData-out-0:
+          group: supplier
+          destination: foobar
+        transform-in-0:
+          group: function
+          destination: foobar
+        transform-out-0:
+          destination: transformed
+        receive-in-0:
+          group: consumer
+          destination: transformed
+          consumer:
+            max-attempts: 2
+            backOffInitialInterval: 1000
+            #backOffMaxInterval: 10000
+            #defaultRetryable: true
+            #recoveryInterval: 30000
+            #exchange-type:  direct
+            #republishToDlq: true
+            auto-bind-dlq: false
+            concurrency: 1
+            #dlqName: receive-1-dlq
+            #deadLetterQueueName: DLX2
+            # retry-template-name: myRetryTemplate
+            acknowledgeMode: AUTO
+            #acknowledge-mode: MANUAL
+
+        receive2-in-0:
+          group: consumer2
+          destination: DLX
+
+# No bean named 'errorChannel' has been explicitly defined.
+# 'republishToDlq' is true, but the 'DLX' dead letter exchange is not present; disabling 'republishToDlq'
+
+      poller:
+        fixed-delay: 100
+
+# Enable gracefule shutdown
+server.shutdown: graceful
+# Allow grace timeout period for 20 seconds
+spring.lifecycle.timeout-per-shutdown-phase: 20s
+
+
+
