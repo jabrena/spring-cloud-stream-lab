@@ -49,10 +49,13 @@ class DemoApplicationTests {
 	@EnableAutoConfiguration
 	public static class SamplePolledConfiguration {
 
+		/*
 		@Bean
 		public MessageSource<?> source() {
 			return () -> new GenericMessage<>("My Own Data " + UUID.randomUUID());
 		}
+
+		 */
 
 		@Bean
 		public ApplicationRunner poller(
